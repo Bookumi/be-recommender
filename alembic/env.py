@@ -1,12 +1,12 @@
 from logging.config import fileConfig
-
 from sqlalchemy import engine_from_config
 from sqlalchemy import pool
-
 from alembic import context
 
-import os
+from app.database import Base
+from app.models import book, genre, book_genre 
 
+import os
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -35,8 +35,8 @@ if config.config_file_name is not None:
 # for 'autogenerate' support
 from app.database import Base
 from app.models import *  # import all models
+
 target_metadata = Base.metadata
-target_metadata = None
 
 # other values from the config, defined by the needs of env.py,
 # can be acquired:
