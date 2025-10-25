@@ -56,5 +56,18 @@ def upgrade():
 def downgrade():
     bind = op.get_bind()
     session = Session(bind=bind)
-    session.execute(sa.text("DELETE FROM books"))
+
+    # Load the same JSON file used in upgrade()
+    file_path = Path(__file__).parent.parent.parent / "app" / "seed" / "books_data.json"
+    with open(file_path, "r") as f:
+        books = json.load(f)
+
+    # Delete only those that were seeded
+    book_ids = [b["book_id"] for b in books]
+
+    session.execute(
+        sa.text("DELETE FROM books WHERE id = ANY(:ids)"),
+        {"ids": book_ids}
+    )
+
     session.commit()
