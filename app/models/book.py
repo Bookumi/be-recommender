@@ -6,8 +6,8 @@ from app.database import Base
 class Book(Base):
   __tablename__ = "books"
   id = Column(Integer, primary_key=True, index=True)
-  name = Column(String, unique=True, nullable=False)
   title = Column(String, unique=False, nullable=False)
+  description = Column(Text, unique=True, nullable=False)
   language_code = Column(String, unique=False, nullable=False)
   average_rating = Column(Float, unique=False, nullable=False)
   ratings_count = Column(Integer, unique=False, nullable=False)
