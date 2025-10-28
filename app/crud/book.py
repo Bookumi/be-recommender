@@ -24,3 +24,11 @@ def get_all_books(db: Session, pagination: Pagination, book_filter: BookFilter):
   total = query.count()
 
   return books, total
+
+def get_detail_book(db: Session, id: int):
+  book = db.query(Book).filter(Book.id == id).first()
+
+  return book
+
+def get_similiar_books():
+  return

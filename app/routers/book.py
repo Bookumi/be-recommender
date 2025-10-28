@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app.database import get_db
 from app.schemas import book as BookSchema
@@ -20,3 +20,12 @@ def get_all_books(
     limit=pagination.limit,
     items=books
   )
+
+@router.get("/{id}", response_model=BookSchema.BookResponse)
+def get_detail_book(id: int, db: Session = Depends(get_db)):
+  book = BookCRUD.get_detail_book(db, id)
+
+  if not book:
+    raise HTTPException(status_code=404, detail="book not found")
+
+  return book
