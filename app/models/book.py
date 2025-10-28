@@ -2,7 +2,7 @@ from sqlalchemy import Column, Integer, String, Float, Text
 from sqlalchemy.orm import relationship
 from app.models.book_genre import books_genres
 from app.database import Base
-
+from pydantic import Field, BaseModel
 class Book(Base):
   __tablename__ = "books"
   id = Column(Integer, primary_key=True, index=True)
