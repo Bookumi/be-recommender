@@ -1,4 +1,4 @@
 /fastapi-recommender-be
 .env
-/app/seed
+/app/seed/*.json
 /app/recommenders/models
