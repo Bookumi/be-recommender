@@ -5,7 +5,7 @@ from app.schemas.book import BookFilter, BookResponse, SimiliarBookFilter
 from app.schemas.pagination import PaginatedResponse, Pagination
 from app.schemas.response import BaseResponse
 from app.crud import book as BookCRUD
-from app.recommenders.faiss import faiss_index, book_id_to_idx, idx_to_book_id
+import app.recommenders.faiss as recommender
 
 router = APIRouter(prefix="/api/v1/books", tags=["Books"])
 
@@ -33,20 +33,21 @@ def get_similiar_books(
   db: Session = Depends(get_db)
 ):
   # Membuat vector untuk buku yang dicari
-  book_idx = book_id_to_idx.get(book_filter.book_id)
+  print(type(list(recommender.book_id_to_idx.keys())[0]))
+  book_idx = recommender.book_id_to_idx.get(book_filter.book_id)
   if book_idx is None:
       raise HTTPException(status_code=404, detail="Book ID not found in FAISS index")
 
-  book_vector = faiss_index.reconstruct(book_idx)
+  book_vector = recommender.faiss_index.reconstruct(book_idx)
 
   # Mencari item dengan jarak vector terdekat
-  distances, indices = faiss_index.search(book_vector.reshape(1, -1), book_filter.top_k + 1)
+  distances, indices = recommender.faiss_index.search(book_vector.reshape(1, -1), book_filter.top_k + 1)
   indices = indices.flatten().tolist()
 
   # remove itself
   indices = [i for i in indices if i != book_idx]
 
-  similar_book_ids = [idx_to_book_id[i] for i in indices]
+  similar_book_ids = [recommender.idx_to_book_id[i] for i in indices]
 
   # Gunakan book_id untuk query get book by ids
   books, total = BookCRUD.get_similiar_books(

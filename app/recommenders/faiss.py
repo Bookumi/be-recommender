@@ -17,5 +17,6 @@ def load_index(index_path: str, mapping_path: str):
         idx_to_book_id = mappings["idx_to_book_id"]
 
     print(f"✅ Loaded FAISS index with {faiss_index.ntotal} vectors")
-    print(f"✅ Loaded {len(book_id_to_idx)} book mappings")
+    print(f"✅ Loaded {len(book_id_to_idx)} book_id_to_idx mappings")
+    print(f"🔹 First 5 book_ids: {list(book_id_to_idx.keys())[:5]}")
 
