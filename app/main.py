@@ -16,7 +16,12 @@ app.include_router(book.router)
 
 @app.on_event("startup")
 def startup_event():
-    load_index(os.getenv("PATH_TO_FAISS_INDEX"), os.getenv("PATH_TO_FAISS_ID_MAPPING"))
+    load_index(
+        os.getenv("PATH_TO_FAISS_INDEX_EN"),
+        os.getenv("PATH_TO_FAISS_ID_MAPPING_EN"),
+        os.getenv("PATH_TO_FAISS_INDEX_IND"),
+        os.getenv("PATH_TO_FAISS_ID_MAPPING_IND")
+    )
 
 @app.get("/")
 def root():
