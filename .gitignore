@@ -1,3 +1,4 @@
 /fastapi-recommender-be
 .env
 /app/seed
+/app/recommenders/models
