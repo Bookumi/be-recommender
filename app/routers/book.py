@@ -32,22 +32,42 @@ def get_similiar_books(
   pagination: Pagination = Depends(),
   db: Session = Depends(get_db)
 ):
-  # Membuat vector untuk buku yang dicari
-  print(type(list(recommender.book_id_to_idx.keys())[0]))
-  book_idx = recommender.book_id_to_idx.get(book_filter.book_id)
-  if book_idx is None:
-      raise HTTPException(status_code=404, detail="Book ID not found in FAISS index")
+  similar_book_ids = []
 
-  book_vector = recommender.faiss_index.reconstruct(book_idx)
+  if book_filter.book_language_code == "ind":
+    # Membuat vector untuk buku yang dicari
+    book_idx = recommender.book_id_to_idx_ind.get(book_filter.book_id)
+    if book_idx is None:
+        raise HTTPException(status_code=404, detail="Book ID not found in FAISS index")
 
-  # Mencari item dengan jarak vector terdekat
-  distances, indices = recommender.faiss_index.search(book_vector.reshape(1, -1), book_filter.top_k + 1)
-  indices = indices.flatten().tolist()
+    book_vector = recommender.faiss_index_ind.reconstruct(book_idx)
 
-  # remove itself
-  indices = [i for i in indices if i != book_idx]
+    # Mencari item dengan jarak vector terdekat
+    distances, indices = recommender.faiss_index_ind.search(book_vector.reshape(1, -1), book_filter.top_k + 1)
+    indices = indices.flatten().tolist()
 
-  similar_book_ids = [recommender.idx_to_book_id[i] for i in indices]
+    # remove itself
+    indices = [i for i in indices if i != book_idx]
+
+    similar_book_ids = [recommender.idx_to_book_id_ind[i] for i in indices]
+  elif book_filter.book_language_code == "en":
+    # Membuat vector untuk buku yang dicari
+    book_idx = recommender.book_id_to_idx_en.get(book_filter.book_id)
+    if book_idx is None:
+        raise HTTPException(status_code=404, detail="Book ID not found in FAISS index")
+
+    book_vector = recommender.faiss_index_en.reconstruct(book_idx)
+
+    # Mencari item dengan jarak vector terdekat
+    distances, indices = recommender.faiss_index_en.search(book_vector.reshape(1, -1), book_filter.top_k + 1)
+    indices = indices.flatten().tolist()
+
+    # remove itself
+    indices = [i for i in indices if i != book_idx]
+
+    similar_book_ids = [recommender.idx_to_book_id_en[i] for i in indices]
+  else:
+     raise HTTPException(status_code=403, detail=f"unrecognise book_language_code value: {book_filter.book_language_code}")
 
   # Gunakan book_id untuk query get book by ids
   books, total = BookCRUD.get_similiar_books(
@@ -58,7 +78,7 @@ def get_similiar_books(
   )
 
   return BaseResponse(
-    message=f"success get similiar books of book_id ${book_filter.book_id}",
+    message=f"success get similiar books of book_id {book_filter.book_id}",
     data=PaginatedResponse(
       total=total,
       page=pagination.page,

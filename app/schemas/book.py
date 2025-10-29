@@ -34,6 +34,7 @@ class BookFilter(BaseModel):
   
 class SimiliarBookFilter(BaseModel):
   book_id: int = Field(..., description="book_id")
+  book_language_code: str = Field(..., description="book language code")
   top_k: int = Field(5, description="number of total similiar books to return")
   genres: Optional[list[str]] = Field([], description="filter by its genres")
   language_codes: Optional[list[str]] = Field([], description="filter by its language code")
@@ -41,7 +42,8 @@ class SimiliarBookFilter(BaseModel):
   @classmethod
   def as_query(cls,
               book_id: int = Query(...),
+              book_language_code: str = Query(...),
               top_k: int = Query(5),
               genres: list[str] = Query(default_factory=list),
               language_codes: list[str] = Query(default_factory=list)):
-      return cls(book_id=book_id, top_k=top_k, genres=genres, language_codes=language_codes)
+      return cls(book_id=book_id, book_language_code=book_language_code, top_k=top_k, genres=genres, language_codes=language_codes)
