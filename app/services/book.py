@@ -75,9 +75,9 @@ def get_similiar_books(
   return books, total
 
 def get_cf_svd_recommendation(
-  get_recommendation_request: GetCFSVDRecommendation = Depends(GetCFSVDRecommendation.as_query),
-  pagination: Pagination = Depends(),
-  db: Session = Depends(get_db)
+  get_recommendation_request: GetCFSVDRecommendation,
+  pagination: Pagination,
+  db: Session
 ):
   target_user: list[int]
 

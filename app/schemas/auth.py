@@ -7,18 +7,16 @@ class LoginMethod(Enum):
   EMAIL = "email"
   PHONE_NUMBER = "phone_number"
 
-class Token(BaseModel):
-  access_token: str
-  token_type: str
-
-class TokenData(BaseModel):
+class LoginResponse(BaseModel):
   name: str
   email: str
+  phonenumber: Optional[str]
+  token: str
   
 class Login(BaseModel):
-    key: str = Field(..., min_length=1, description="mail or phone number") 
-    password: str = Field(..., min_length=1, description="Password")
-
+  key: str = Field(..., min_length=1, description="mail or phone number") 
+  password: str = Field(..., min_length=1, description="Password")
+    
 class Register(BaseModel):
     name: str = Field(..., description="Username")
     email: str = Field(..., description="Email")
