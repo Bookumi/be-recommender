@@ -18,3 +18,18 @@ def load_svd_and_user_items_dict(file_path: str):
   if len(user_items) > 0:
         example_user = list(user_items.keys())[0]
         print(f"Example user: {example_user}, liked books: {user_items[example_user][:5]}")
+
+def get_similiar_user(liked_books: list[int]) -> int | None:
+  if not user_items:
+      return None
+   
+  bset_user = None
+  best_overlap = 0
+
+  for uid, books in user_items.items():
+     overlap = len(set(books) & set(liked_books))
+     if overlap > best_overlap:
+        best_overlap = overlap
+        best_user = uid
+        
+  return best_user 
