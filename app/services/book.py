@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from app.database import get_db
 from app.schemas.book import BookFilter, BookResponse, SimiliarBookFilter, GetCFSVDRecommendation
@@ -33,7 +33,7 @@ def get_similiar_books(
     # Membuat vector untuk buku yang dicari
     book_idx = FAISSRecommender.book_id_to_idx_ind.get(book_filter.book_id)
     if book_idx is None:
-        raise HTTPException(status_code=404, detail="Book ID not found in FAISS index")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Book ID not found in FAISS index")
 
     book_vector = FAISSRecommender.faiss_index_ind.reconstruct(book_idx)
 
@@ -49,7 +49,7 @@ def get_similiar_books(
     # Membuat vector untuk buku yang dicari
     book_idx = FAISSRecommender.book_id_to_idx_en.get(book_filter.book_id)
     if book_idx is None:
-        raise HTTPException(status_code=404, detail="Book ID not found in FAISS index")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Book ID not found in FAISS index")
 
     book_vector = FAISSRecommender.faiss_index_en.reconstruct(book_idx)
 
@@ -62,7 +62,7 @@ def get_similiar_books(
 
     similar_book_ids = [FAISSRecommender.idx_to_book_id_en[i] for i in indices]
   else:
-     raise HTTPException(status_code=403, detail=f"unrecognise book_language_code value: {book_filter.book_language_code}")
+     raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f"unrecognise book_language_code value: {book_filter.book_language_code}")
   
   
   books, total = BookCRUD.get_similiar_books(
@@ -82,7 +82,7 @@ def get_cf_svd_recommendation(
   target_user: list[int]
 
   if SVDRecommender.svd_model is None or SVDRecommender.user_items is None:
-    raise HTTPException(status_code=500, detail="SVD model and user_items dict not load properly")
+    raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="SVD model and user_items dict not load properly")
   
   # Case pertama, jika user_id ada di dalam user_items
   if get_recommendation_request.user_id in SVDRecommender.user_items:
@@ -90,12 +90,12 @@ def get_cf_svd_recommendation(
   else:
     # Case kedua, jika tidak ada user_id di dalam user_items
     if not get_recommendation_request.liked_books:
-         raise HTTPException(status_code=400, detail="liked books is required for new users")
+         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="liked books is required for new users")
      
     user_with_same_liked = SVDRecommender.get_similiar_user(get_recommendation_request.liked_books)
 
     if user_with_same_liked is None:
-       raise HTTPException(status_code=404, detail="user with similiar liked book not found")
+       raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="user with similiar liked book not found")
      
     target_user = user_with_same_liked
      

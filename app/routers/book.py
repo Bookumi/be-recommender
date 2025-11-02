@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from app.database import get_db
 from app.schemas.book import BookFilter, BookResponse, SimiliarBookFilter, GetCFSVDRecommendation
@@ -56,7 +56,7 @@ def get_detail_book(id: int, db: Session = Depends(get_db)):
   book = BookService.get_detail_book(id, db)
 
   if not book:
-    raise HTTPException(status_code=404, detail="book not found")
+    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="book not found")
 
   return BaseResponse(
     message="success get detail book",

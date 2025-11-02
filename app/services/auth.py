@@ -1,4 +1,4 @@
-from fastapi import HTTPException
+from fastapi import HTTPException, status
 from app.schemas.auth import Login, LoginMethod
 from sqlalchemy.orm import Session
 from app.crud import user as UserCRUD
@@ -19,7 +19,7 @@ def authenticate_user(login_request: Login, db: Session):
     user = UserCRUD.get_user_detail(login_request.key, LoginMethod.PHONE_NUMBER, db)
     
   if not user:
-    raise HTTPException(status_code=404, detail="user not found")
+    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="user not found")
   
   # Verify password with hashed password
   pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -28,9 +28,9 @@ def authenticate_user(login_request: Login, db: Session):
   
   if not is_verified:
     if "@" in login_request.key:
-      raise HTTPException(status_code="401", detail="your email or password is wrong")
+      raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="your email or password is wrong")
     else:
-      raise HTTPException(status_code="401", detail="your phonenumber or password is wrong")
+      raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="your phonenumber or password is wrong")
   
   # Construct JWT token.
   access_token_expires = datetime.now(timezone.utc) + (timedelta(minutes=int(os.getenv("ACCESS_TOKEN_EXPIRED_MINUTES"))))
