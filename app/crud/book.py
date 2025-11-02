@@ -28,7 +28,7 @@ def get_detail_book(db: Session, id: int):
 
   return book
 
-def get_similiar_books(db, ids: list[int], pagination: Pagination, book_filter: SimiliarBookFilter):
+def get_similiar_books(db: Session, ids: list[int], pagination: Pagination, book_filter: SimiliarBookFilter):
   query = db.query(Book).options(joinedload(Book.genres)).filter(Book.id.in_(ids))
 
   if len(book_filter.language_codes) != 0:
