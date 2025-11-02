@@ -140,7 +140,7 @@ def get_cf_svd_recommendation(
   top_recommendations = sorted(predictions, key=lambda x: x[1], reverse=True)[:pagination.limit]
   recommended_ids = [b for b, _ in top_recommendations]
   
-  books, total = get_similiar_books(db, recommended_ids)
+  books, total = BookCRUD.get_similiar_books(db, recommended_ids, pagination, None)
   
   return BaseResponse(
   	message=f"success get recommended books for user with id {get_recommendation_request.user_id}",

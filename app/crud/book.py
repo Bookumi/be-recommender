@@ -2,7 +2,8 @@ from sqlalchemy.orm import Session, joinedload
 from app.models.book import Book
 from app.models.genre import Genre
 from app.schemas.pagination import Pagination
-from app.schemas.book import BookFilter, SimiliarBookFilter
+from app.schemas.book import BookFilter, SimiliarBookFilter, GetCFSVDRecommendation
+from typing import Union, Any
 
 def get_all_books(db: Session, pagination: Pagination, book_filter: BookFilter):
   query = db.query(Book).options(joinedload(Book.genres)).order_by(Book.score.desc())
@@ -28,14 +29,19 @@ def get_detail_book(db: Session, id: int):
 
   return book
 
-def get_similiar_books(db: Session, ids: list[int], pagination: Pagination, book_filter: SimiliarBookFilter):
+def get_similiar_books(
+  db: Session, ids: list[int],
+  pagination: Pagination,
+  book_filter: Union[SimiliarBookFilter, GetCFSVDRecommendation, Any]
+):
   query = db.query(Book).options(joinedload(Book.genres)).filter(Book.id.in_(ids))
 
-  if len(book_filter.language_codes) != 0:
-    query = query.filter(Book.language_code.in_(book_filter.language_codes))
+  if isinstance(book_filter, SimiliarBookFilter):
+    if len(book_filter.language_codes) != 0:
+      query = query.filter(Book.language_code.in_(book_filter.language_codes))
 
-  if len(book_filter.genres) != 0:
-    query = query.join(Book.genres).filter(Genre.name.in_(book_filter.genres))
+    if len(book_filter.genres) != 0:
+      query = query.join(Book.genres).filter(Genre.name.in_(book_filter.genres))
 
   books = (
     query

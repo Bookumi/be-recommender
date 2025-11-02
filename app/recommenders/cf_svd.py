@@ -17,7 +17,7 @@ def load_svd_and_user_items_dict(file_path: str):
   print("✅ Loaded SVD model and user-item mappings")
   print(f"Total users in training data: {len(user_items)}")
   if len(user_items) > 0:
-        example_user = list(user_items.keys())[3]
+        example_user = list(user_items.keys())[100]
         print(f"Example user: {example_user}, liked books: {user_items[example_user][:5]}")
 
 def get_similiar_user(liked_books: list[int]) -> Optional[int]:
