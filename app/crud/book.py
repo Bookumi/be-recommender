@@ -5,7 +5,7 @@ from app.schemas.pagination import Pagination
 from app.schemas.book import BookFilter, SimiliarBookFilter, GetCFSVDRecommendation
 from typing import Union, Any
 
-def get_all_books(db: Session, pagination: Pagination, book_filter: BookFilter):
+def get_all_books(book_filter: BookFilter, pagination: Pagination, db: Session):
   query = db.query(Book).options(joinedload(Book.genres)).order_by(Book.score.desc())
 
   if len(book_filter.language_codes) != 0:
@@ -24,15 +24,16 @@ def get_all_books(db: Session, pagination: Pagination, book_filter: BookFilter):
 
   return books, total
 
-def get_detail_book(db: Session, id: int):
+def get_detail_book(id: int, db: Session):
   book = db.query(Book).filter(Book.id == id).first()
 
   return book
 
 def get_similiar_books(
-  db: Session, ids: list[int],
+  book_filter: Union[SimiliarBookFilter, GetCFSVDRecommendation, Any],
   pagination: Pagination,
-  book_filter: Union[SimiliarBookFilter, GetCFSVDRecommendation, Any]
+  ids: list[int],
+  db: Session
 ):
   query = db.query(Book).options(joinedload(Book.genres)).filter(Book.id.in_(ids))
 
