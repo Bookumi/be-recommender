@@ -2,7 +2,6 @@ from pathlib import Path
 import json
 from sqlalchemy import text
 from app.database import SessionLocal
-import random
 from faker import Faker
 from passlib.context import CryptContext
 
