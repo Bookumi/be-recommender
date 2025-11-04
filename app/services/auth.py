@@ -2,6 +2,7 @@ from fastapi import HTTPException, status
 from app.schemas.auth import Login, LoginMethod
 from sqlalchemy.orm import Session
 from app.crud import user as UserCRUD
+from app.schemas.auth import JWTPayload
 from passlib.context import CryptContext
 from datetime import datetime, timedelta, timezone
 import os
@@ -35,7 +36,8 @@ def authenticate_user(login_request: Login, db: Session):
   # Construct JWT token.
   access_token_expires = datetime.now(timezone.utc) + (timedelta(minutes=int(os.getenv("ACCESS_TOKEN_EXPIRED_MINUTES"))))
   token_payload = {
-    "sub": user.email,
+    "sub": str(user.id),
+    "email": user.email,
     "exp": access_token_expires
   }
   

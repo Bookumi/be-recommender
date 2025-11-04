@@ -1,4 +1,5 @@
 from pydantic import BaseModel, Field, field_validator
+from datetime import datetime
 from typing import Optional
 import re
 from enum import Enum
@@ -6,6 +7,11 @@ from enum import Enum
 class LoginMethod(Enum):
   EMAIL = "email"
   PHONE_NUMBER = "phone_number"
+  
+class JWTPayload(BaseModel):
+  sub: int
+  email: str
+  exp: datetime
 
 class LoginResponse(BaseModel):
   name: str

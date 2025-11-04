@@ -8,6 +8,8 @@ from app.crud import book as BookCRUD
 import app.recommenders.faiss as FAISSRecommender
 import app.recommenders.cf_svd as SVDRecommender
 import app.services.book as BookService
+from app.middlewares.auth import verify_auth_token
+from app.schemas.auth import JWTPayload
 
 router = APIRouter(prefix="/api/v1/books", tags=["Books"])
 
@@ -65,15 +67,19 @@ def get_detail_book(id: int, db: Session = Depends(get_db)):
 
 @router.get("/similiar/cf-svd", response_model=BaseResponse[PaginatedResponse[BookResponse]])
 def get_cf_svd_recommendation(
-  get_recommendation_request: GetCFSVDRecommendation = Depends(GetCFSVDRecommendation.as_query),
   pagination: Pagination = Depends(),
-  db: Session = Depends(get_db)
+  db: Session = Depends(get_db),
+  current_user: JWTPayload = Depends(verify_auth_token)
 ):
+  request_with_user: GetCFSVDRecommendation = {
+    "user_id": current_user.sub,
+    "liked_books": []
+  }
   
-  books, total = BookService.get_cf_svd_recommendation(get_recommendation_request, pagination, db)
+  books, total = BookService.get_cf_svd_recommendation(request_with_user, pagination, db)
 
   return BaseResponse(
-  	message=f"success get recommended books for user with id {get_recommendation_request.user_id}",
+  	message=f"success get recommended books for user with id {current_user.sub}",
   	data=PaginatedResponse(
   	  total=total,
   	  page=pagination.page,

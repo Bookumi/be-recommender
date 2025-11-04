@@ -21,8 +21,7 @@ def verify_auth_token(credentials: HTTPAuthorizationCredentials = Security(secur
     decoded_token = jwt.decode(
         token,
         key=os.getenv("SECRET_KEY"),
-        algorithms=[os.getenv("ALGORITHM") or "HS256"],
-        options={"verify_sub": False}
+        algorithms=[os.getenv("ALGORITHM") or "HS256"]
     )
 
     return JWTPayload(**decoded_token)    
