@@ -15,7 +15,7 @@ def verify_auth_token(credentials: HTTPAuthorizationCredentials = Security(secur
           detail="Authorization credentials missing"
       )
   
-  token = credentials.credentials[7:].strip()
+  token = credentials.credentials
 
   try:
     decoded_token = jwt.decode(
