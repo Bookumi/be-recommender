@@ -1,12 +1,13 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from app.database import get_db
-from app.schemas.book import BookFilter, BookResponse, SimiliarBookFilter, GetCFSVDRecommendation
+from app.schemas.book import BookFilter, BookResponse, SimiliarBookFilter, GetCFSVDRecommendation, AddRating
 from app.schemas.pagination import PaginatedResponse, Pagination
 from app.schemas.response import BaseResponse
 from app.crud import book as BookCRUD
 import app.recommenders.faiss as FAISSRecommender
 import app.recommenders.cf_svd as SVDRecommender
+from app.models.user_book_ratings import UserBookRating
 
 def get_all_books(
   book_filter: BookFilter,
@@ -116,3 +117,24 @@ def get_cf_svd_recommendation(
   books, total = BookCRUD.get_similiar_books(None, pagination, recommended_ids, db)
   
   return books, total
+
+def add_rating(add_rating_payload: AddRating, db: Session):
+  existing_book_rating: UserBookRating = BookCRUD.get_book_rating(
+      add_rating_payload.book_id, add_rating_payload.user_id, db
+  )
+    
+  if existing_book_rating:
+      # Directly update the existing object
+      book_rating = BookCRUD.update_rating(
+          existing_book_rating, add_rating_payload.rating, db
+      )
+  else:
+      # Create a new rating object
+      new_rating = UserBookRating(
+          book_id=add_rating_payload.book_id,
+          user_id=add_rating_payload.user_id,
+          rating=add_rating_payload.rating
+      )
+      book_rating = BookCRUD.add_rating(new_rating, db)
+    
+  return book_rating

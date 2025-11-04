@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from app.database import get_db
-from app.schemas.book import BookFilter, BookResponse, SimiliarBookFilter, GetCFSVDRecommendation
+from app.schemas.book import BookFilter, BookResponse, SimiliarBookFilter, GetCFSVDRecommendation, AddRating
 from app.schemas.pagination import PaginatedResponse, Pagination
 from app.schemas.response import BaseResponse
 from app.crud import book as BookCRUD
@@ -30,6 +30,23 @@ def get_all_books(
       items=books
     )
   )
+
+@router.post("/rating", response_model=BaseResponse[AddRating])
+def add_rating(
+  add_rating_request: AddRating,
+  db: Session = Depends(get_db),
+  current_user: JWTPayload = Depends(verify_auth_token)
+):
+  add_rating_payload = add_rating_request.model_copy(update={"user_id": current_user.sub})
+  
+  book_rating = BookService.add_rating(add_rating_payload, db)
+  
+  return BaseResponse(
+    message="success add or update book rating",
+    data=book_rating
+  )
+  
+  
 
 @router.get("/similiar", response_model=BaseResponse[PaginatedResponse[BookResponse]])
 def get_similiar_books(

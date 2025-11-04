@@ -55,11 +55,8 @@ class SimiliarBookFilter(BaseModel):
 class GetCFSVDRecommendation(BaseModel):
   user_id:  Optional[int] = Field(None, description="user_id")
   liked_books: Optional[list[int]] = Query(default=[])
-
-  @classmethod
-  def as_query(
-    cls,
-    user_id: int = Query(...),
-    liked_books: list[int] = Query(default=[])
-  ):
-     return cls(user_id=user_id, liked_books=liked_books)
+  
+class AddRating(BaseModel):
+  rating: int
+  _user_id: Optional[int]
+  book_id: int

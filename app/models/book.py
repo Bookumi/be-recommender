@@ -1,8 +1,11 @@
-from sqlalchemy import Column, Integer, String, Float, Text
+from sqlalchemy import Column, Integer, String, Float, Text, ForeignKey, Table
 from sqlalchemy.orm import relationship
 from app.models.book_genre import books_genres
 from app.database import Base
 from pydantic import Field, BaseModel
+from app.models.user_book_ratings import UserBookRating
+
+
 class Book(Base):
   __tablename__ = "books"
   id = Column(Integer, primary_key=True, index=True)
@@ -16,3 +19,4 @@ class Book(Base):
   image_url = Column(Text, unique=False, nullable=True)
 
   genres = relationship("Genre", secondary=books_genres, back_populates="books")
+  book_ratings = relationship("UserBookRating", back_populates="book")
