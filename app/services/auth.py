@@ -8,6 +8,7 @@ from app.models.user import User
 from datetime import datetime, timedelta, timezone
 import os
 import jwt
+from app.utils.authentication import hash_password
 
 from dotenv import load_dotenv
 
@@ -41,10 +42,14 @@ def authenticate_user(login_request: Login, db: Session):
   return generated_token, user
 
 def register_user(register_request: Register, db: Session):
-  user = UserCRUD.create(register_request, db)
+  new_user = User(
+    name=register_request.name,
+    email=register_request.email,
+    phone_number=register_request.phone_number,
+    password=hash_password(register_request.password)
+  )
+  user = UserCRUD.create(new_user, db)
   generated_token = generate_jwt_token(user)
-  
-  
   return user, generated_token
 
 def generate_jwt_token(user_data: User):

@@ -3,7 +3,7 @@ import json
 from sqlalchemy import text
 from app.database import SessionLocal
 from faker import Faker
-from passlib.context import CryptContext
+from app.utils.authentication import hash_password
 
 def seed_users():
   session = SessionLocal()
@@ -14,14 +14,13 @@ def seed_users():
   
   with open(file_path, "r") as f:
     users = json.load(f)
-    
-  pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+  
   
   feker_instance = Faker()
   
   # This default password is just for development purpose
   # Please use proper password in production
-  hashed_default_password = pwd_context.hash("User#123".encode('utf-8'))
+  hashed_default_password = hash_password("User#123")
     
   for u in users:
     session.execute(

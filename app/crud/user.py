@@ -18,11 +18,10 @@ def get_user_detail(key: str, method: LoginMethod, db: Session):
   return user
 
 def create(new_user_data: Register, db: Session):
-  new_user = User(**new_user_data.model_dump())
   try:
-    db.add(new_user)
+    db.add(new_user_data)
     db.commit()
-    db.refresh(new_user)
+    db.refresh(new_user_data)
   except IntegrityError as e:
     db.rollback()
     if "email" in str(e.orig) and "exists" in str(e.orig):
@@ -33,4 +32,4 @@ def create(new_user_data: Register, db: Session):
       raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e.orig))
 
     
-  return new_user
+  return new_user_data
