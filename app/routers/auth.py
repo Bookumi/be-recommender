@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Response
 from app.schemas.response import BaseResponse
 from app.schemas.auth import LoginResponse, Login, Register
 from sqlalchemy.orm import Session
@@ -42,4 +42,12 @@ def register(
       phonenumber=user.phone_number,
       token=generated_token
     )
+  )
+  
+@router.post("/logout")
+def logout(response: Response):
+  response.delete_cookie(key="access_token")  # name of your cookie
+  return BaseResponse(
+    message="success logout",
+    data=None
   )
