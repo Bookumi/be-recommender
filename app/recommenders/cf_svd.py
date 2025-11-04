@@ -24,7 +24,7 @@ def get_similiar_user(liked_books: list[int]) -> Optional[int]:
   if not user_items:
       return None
    
-  bset_user = None
+  best_user = None
   best_overlap = 0
 
   for uid, books in user_items.items():

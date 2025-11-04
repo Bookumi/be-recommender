@@ -85,15 +85,18 @@ def get_cf_svd_recommendation(
   if SVDRecommender.svd_model is None or SVDRecommender.user_items is None:
     raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="SVD model and user_items dict not load properly")
   
+  # Get list data buku yang disukai oleh user
+  liked_book_ids = BookCRUD.get_liked_book_ids_by_user_id(get_recommendation_request["user_id"], db)
+  
   # Case pertama, jika user_id ada di dalam user_items
   if get_recommendation_request["user_id"] in SVDRecommender.user_items:
     target_user = get_recommendation_request["user_id"]
   else:
     # Case kedua, jika tidak ada user_id di dalam user_items
-    if not get_recommendation_request["liked_books"]:
+    if not liked_book_ids:
          raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="liked books is required for new users")
      
-    user_with_same_liked = SVDRecommender.get_similiar_user(get_recommendation_request["liked_books"])
+    user_with_same_liked = SVDRecommender.get_similiar_user(liked_book_ids)
 
     if user_with_same_liked is None:
        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="user with similiar liked book not found")
