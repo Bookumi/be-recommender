@@ -2,8 +2,9 @@ from fastapi import HTTPException, status
 from sqlalchemy.orm import Session, joinedload
 from app.models.user import User
 from app.schemas.pagination import Pagination
-from app.schemas.auth import LoginMethod
+from app.schemas.auth import LoginMethod, Register
 from typing import Union, Any
+from sqlalchemy.exc import IntegrityError
 
 
 def get_user_detail(key: str, method: LoginMethod, db: Session):
@@ -15,3 +16,21 @@ def get_user_detail(key: str, method: LoginMethod, db: Session):
     raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="not recognize login method please try again with email or phonenumber")
   
   return user
+
+def create(new_user_data: Register, db: Session):
+  new_user = User(**new_user_data.model_dump())
+  try:
+    db.add(new_user)
+    db.commit()
+    db.refresh(new_user)
+  except IntegrityError as e:
+    db.rollback()
+    if "email" in str(e.orig) and "exists" in str(e.orig):
+      raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="email already exists")
+    elif "phone" in str(e.orig) and "exists" in str(e.orig):
+      raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="phone number already exists")
+    else:
+      raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e.orig))
+
+    
+  return new_user

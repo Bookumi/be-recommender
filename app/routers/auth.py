@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from app.schemas.response import BaseResponse
-from app.schemas.auth import LoginResponse, Login
+from app.schemas.auth import LoginResponse, Login, Register
 from sqlalchemy.orm import Session
 from app.database import get_db
 from app.services import auth as AuthService
@@ -24,5 +24,22 @@ def login(
       email=user.email,
       phonenumber=user.phone_number,
       token=token,
+    )
+  )
+
+@router.post("/register", response_model=BaseResponse[LoginResponse])
+def register(
+  register_request: Register,
+  db: Session = Depends(get_db)
+):
+  user, generated_token = AuthService.register_user(register_request, db)
+  
+  return BaseResponse(
+    message="success register a new user",
+    data=LoginResponse(
+      name=user.name,
+      email=user.email,
+      phonenumber=user.phone_number,
+      token=generated_token
     )
   )

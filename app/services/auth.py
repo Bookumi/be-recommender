@@ -1,9 +1,10 @@
 from fastapi import HTTPException, status
-from app.schemas.auth import Login, LoginMethod
+from app.schemas.auth import Login, LoginMethod, Register
 from sqlalchemy.orm import Session
 from app.crud import user as UserCRUD
 from app.schemas.auth import JWTPayload
 from passlib.context import CryptContext
+from app.models.user import User
 from datetime import datetime, timedelta, timezone
 import os
 import jwt
@@ -12,6 +13,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+# User for login or authenticate_user.
 def authenticate_user(login_request: Login, db: Session):
   # Get user data.
   if "@" in login_request.key:
@@ -34,14 +36,25 @@ def authenticate_user(login_request: Login, db: Session):
       raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="your phonenumber or password is wrong")
   
   # Construct JWT token.
+  generated_token = generate_jwt_token(user)
+  
+  return generated_token, user
+
+def register_user(register_request: Register, db: Session):
+  user = UserCRUD.create(register_request, db)
+  generated_token = generate_jwt_token(user)
+  
+  
+  return user, generated_token
+
+def generate_jwt_token(user_data: User):
   access_token_expires = datetime.now(timezone.utc) + (timedelta(minutes=int(os.getenv("ACCESS_TOKEN_EXPIRED_MINUTES"))))
   token_payload = {
-    "sub": str(user.id),
-    "email": user.email,
+    "sub": str(user_data.id),
+    "email": user_data.email,
     "exp": access_token_expires
   }
   
   generated_token = jwt.encode(token_payload, os.getenv("SECRET_KEY"), os.getenv("ALGORITHM"))
   
-  return generated_token, user
-  
+  return generated_token

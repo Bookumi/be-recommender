@@ -1,4 +1,5 @@
 from pydantic import BaseModel, Field, field_validator
+from fastapi import HTTPException
 from datetime import datetime
 from typing import Optional
 import re
@@ -26,7 +27,7 @@ class Login(BaseModel):
 class Register(BaseModel):
     name: str = Field(..., description="Username")
     email: str = Field(..., description="Email")
-    phone_number: Optional[str] = Field(..., description="Phone number")
+    phone_number: Optional[str] = Field("", description="Phone number")
     password: str = Field(..., description="Password with minimum 8 characters, one uppercase, one lowercase, one number, and one special character")
     
     @field_validator('password')
