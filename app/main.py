@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from app.routers import book, auth
+from app.routers import book, auth, users
 from app import models
 from app.database import engine, Base
 from app.recommenders.faiss import load_index
@@ -15,6 +15,7 @@ app = FastAPI(title="recommender-service")
 
 app.include_router(book.router)
 app.include_router(auth.router)
+app.include_router(users.router)
 
 @app.on_event("startup")
 def startup_event():

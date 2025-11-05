@@ -2,6 +2,7 @@ from sqlalchemy import Column, Integer, String
 from sqlalchemy.orm import relationship
 from app.database import Base
 from app.models.book_genre import books_genres
+from app.models.user_genre_preference import UserGenrePreference
 
 class Genre(Base):
   __tablename__ = "genres"
@@ -9,5 +10,4 @@ class Genre(Base):
   name = Column(String, unique=True, nullable=False)
   
   books = relationship("Book", secondary=books_genres, back_populates="genres")
-  genre_prefferences = relationship("UserGenrePrefference", back_populates="genre")
-  
+  user_preferences = relationship(UserGenrePreference, back_populates="genre")

@@ -20,7 +20,7 @@ depends_on: Union[str, Sequence[str], None] = None
 
 def upgrade() -> None:
     """Upgrade schema."""
-    op.create_table("user_genre_prefferences",
+    op.create_table("user_genre_preferences",
     sa.Column("user_id", sa.Integer(), nullable=False),
     sa.Column("genre_id", sa.Integer(), nullable=False),
     sa.ForeignKeyConstraint(["user_id"], ["users.id"], ondelete="CASCADE"),
@@ -31,4 +31,4 @@ def upgrade() -> None:
 
 def downgrade() -> None:
     """Downgrade schema."""
-    op.drop_table("user_genre_prefferences")
+    op.drop_table("user_genre_preferences")
