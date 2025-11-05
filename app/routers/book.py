@@ -39,6 +39,12 @@ def add_rating(
 ):
   add_rating_payload = add_rating_request.model_copy(update={"user_id": current_user.sub})
   
+  if int(add_rating_payload.rating) < 1 or int(add_rating_payload.rating) > 5:
+    raise HTTPException(
+      status_code=status.HTTP_400_BAD_REQUEST,
+      detail="rating rabge must greater than 0 and less than or equal to 5 (1 - 5)"
+    )
+  
   book_rating = BookService.add_rating(add_rating_payload, db)
   
   return BaseResponse(
