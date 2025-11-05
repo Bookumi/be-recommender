@@ -9,3 +9,5 @@ class Genre(Base):
   name = Column(String, unique=True, nullable=False)
   
   books = relationship("Book", secondary=books_genres, back_populates="genres")
+  genre_prefferences = relationship("UserGenrePrefference", back_populates="genre")
+  

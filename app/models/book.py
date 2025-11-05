@@ -20,3 +20,4 @@ class Book(Base):
 
   genres = relationship("Genre", secondary=books_genres, back_populates="books")
   book_ratings = relationship("UserBookRating", back_populates="book")
+

@@ -12,3 +12,4 @@ class User(Base):
   password = Column(Text(), unique=True, nullable=False)
   
   book_ratings = relationship("UserBookRating", back_populates="user")
+  genre_prefferences = relationship("UserGenrePrefference", back_populates="user")
