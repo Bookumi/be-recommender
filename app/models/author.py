@@ -6,7 +6,7 @@ from pydantic import Field, BaseModel
 from app.models.user_book_ratings import UserBookRating
 
 
-class Book(Base):
+class Author(Base):
   __tablename__ = "authors"
   id = Column(Integer, primary_key=True, index=True)
   name = Column(String, unique=False, nullable=False)
@@ -14,5 +14,5 @@ class Book(Base):
   score = Column(Float, unique=False, nullable=True)
   average_rating = Column(Float, unique=False, nullable=False)
 
-  books = relationship("Book", secondary=authors_books, back_populates="books")
+  books = relationship("Book", secondary=authors_books, back_populates="authors")
 
