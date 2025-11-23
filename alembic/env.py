@@ -4,7 +4,7 @@ from sqlalchemy import pool
 from alembic import context
 
 from app.database import Base
-from app.models import book, genre, book_genre 
+from app.models import book, genre, book_genre, user 
 
 import os
 from dotenv import load_dotenv
