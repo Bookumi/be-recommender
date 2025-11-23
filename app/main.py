@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from app.routers import book, auth, users
 from app import models
+from fastapi.middleware.cors import CORSMiddleware
 from app.database import engine, Base
 from app.recommenders.faiss import load_index
 from app.recommenders.cf_svd import load_svd_and_user_items_dict
@@ -12,6 +13,18 @@ load_dotenv()
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="recommender-service")
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "http://localhost:3000",
+        "http://localhost:3001",
+        "http://127.0.0.1:3000",
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 app.include_router(book.router)
 app.include_router(auth.router)
