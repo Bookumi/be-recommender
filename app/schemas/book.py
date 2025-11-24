@@ -2,6 +2,7 @@ from fastapi import Query
 from pydantic import BaseModel, Field
 from typing import List, Optional
 from app.schemas.genre import GenreResponse
+from app.schemas.author import AuthorResponse
 
 class GetAllBookFilter(BaseModel):
   genres: list[str] = Field(list, description="filter by its genres")
@@ -18,6 +19,7 @@ class BookResponse(BaseModel):
   url: str
   image_url: str
   genres: List[GenreResponse]
+  authors: List[AuthorResponse]
 
   class Config:
     orm_mode = True

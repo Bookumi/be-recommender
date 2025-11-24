@@ -9,7 +9,10 @@ from sqlalchemy.exc import IntegrityError
 from fastapi import HTTPException, status
 
 def get_all_books(book_filter: BookFilter, pagination: Pagination, db: Session):
-  query = db.query(Book).options(joinedload(Book.genres)).order_by(Book.score.desc())
+  query = db.query(Book).options(
+    joinedload(Book.genres),
+    joinedload(Book.authors)
+  ).order_by(Book.score.desc())
 
   if len(book_filter.language_codes) != 0:
     query = query.filter(Book.language_code.in_(book_filter.language_codes))
