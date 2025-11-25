@@ -1,6 +1,8 @@
 from sqlalchemy.orm import Session, joinedload
+from sqlalchemy import or_
 from app.models.book import Book
 from app.models.genre import Genre
+from app.models.author import Author
 from app.models.user_book_ratings import UserBookRating
 from app.schemas.pagination import Pagination
 from app.schemas.book import BookFilter, SimiliarBookFilter, GetCFSVDRecommendation, AddRating
@@ -19,6 +21,14 @@ def get_all_books(book_filter: BookFilter, pagination: Pagination, db: Session):
 
   if len(book_filter.genres) != 0:
     query = query.join(Book.genres).filter(Genre.name.in_(book_filter.genres))
+    
+  if len(book_filter.authors) != 0:
+    author_filters = [
+      Author.name.ilike(f"%{name}%") 
+      for name in book_filter.authors
+    ]
+
+    query = query.join(Book.authors).filter(or_(*author_filters))
 
   books = (
     query

@@ -27,14 +27,16 @@ class BookResponse(BaseModel):
 class BookFilter(BaseModel):
   genres: Optional[list[str]] = Field([], description="filter by its genres")
   language_codes: Optional[list[str]] = Field([], description="filter by its language code")
+  authors: Optional[list[str]] = Field([], description="filter by its authors")
   
   @classmethod
   def as_query(
     cls,
     genres: list[str] = Query(default_factory=list),
-    language_codes: list[str] = Query(default_factory=list)
+    language_codes: list[str] = Query(default_factory=list),
+    authors: list[str] = Query(default_factory=list)
   ):
-    return cls(genres=genres, language_codes=language_codes)
+    return cls(genres=genres, language_codes=language_codes, authors=authors)
   
 class SimiliarBookFilter(BaseModel):
   book_id: int = Field(..., description="book_id")
