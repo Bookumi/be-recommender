@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from app.routers import book, auth, users
+from app.routers import book, auth, users, genre
 from app import models
 from fastapi.middleware.cors import CORSMiddleware
 from app.database import engine, Base
@@ -29,6 +29,7 @@ app.add_middleware(
 app.include_router(book.router)
 app.include_router(auth.router)
 app.include_router(users.router)
+app.include_router(genre.router)
 
 @app.on_event("startup")
 def startup_event():
