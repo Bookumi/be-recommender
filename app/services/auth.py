@@ -1,7 +1,7 @@
 from fastapi import HTTPException, status
 from app.schemas.auth import Login, LoginMethod, Register
 from sqlalchemy.orm import Session
-from app.crud import user as UserCRUD
+from app.repository import user as UserCRUD
 from app.schemas.auth import JWTPayload
 from passlib.context import CryptContext
 from app.models.user import User

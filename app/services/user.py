@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session
-import app.crud.user_preference as UserGenrePrefferenceCRUD
+import app.repository.user_preference as UserGenrePrefferenceCRUD
 from app.schemas.user import UserPreferenceResponse, UserGenrePreferenceRequest, UserLanguagePreferenceRequest, UserPreferenceRequest
 
 def get_preferences_by_user_id(user_id: int, db: Session)->UserGenrePrefferenceCRUD:

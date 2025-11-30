@@ -4,7 +4,7 @@ from app.database import get_db
 from app.schemas.book import BookFilter, BookResponse, SimiliarBookFilter, GetCFSVDRecommendation, AddRating
 from app.schemas.pagination import PaginatedResponse, Pagination
 from app.schemas.response import BaseResponse
-from app.crud import book as BookCRUD
+from app.repository import book as BookCRUD
 import app.recommenders.faiss as FAISSRecommender
 import app.recommenders.cf_svd as SVDRecommender
 from app.models.user_book_ratings import UserBookRating
