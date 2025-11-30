@@ -4,9 +4,6 @@ from app.database import get_db
 from app.schemas.book import BookFilter, BookResponse, SimiliarBookFilter, GetCFSVDRecommendation, AddRating
 from app.schemas.pagination import PaginatedResponse, Pagination
 from app.schemas.response import BaseResponse
-from app.repository import book as BookCRUD
-import app.recommenders.faiss as FAISSRecommender
-import app.recommenders.cf_svd as SVDRecommender
 import app.services.book as BookService
 from app.middlewares.auth import verify_auth_token
 from app.schemas.auth import JWTPayload
