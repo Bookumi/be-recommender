@@ -4,7 +4,7 @@ from app.schemas.pagination import Pagination
 from app.models.author import Author
 
 def get_all_authors(author_filter: AuthorFilter, pagination: Pagination, db: Session):
-  query = db.query(Author).order_by(Author.name.desc())
+  query = db.query(Author)
   
   
   if len(author_filter.author_name) != 0:
