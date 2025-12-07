@@ -18,6 +18,9 @@ def get_all_books(book_filter: BookFilter, pagination: Pagination, db: Session):
 
   if len(book_filter.language_codes) != 0:
     query = query.filter(Book.language_code.in_(book_filter.language_codes))
+    
+  if (book_filter.title != ""):
+    query = query.filter(Book.title.__eq__(book_filter.title))
 
   if len(book_filter.genres) != 0:
     query = query.join(Book.genres).filter(Genre.name.in_(book_filter.genres))

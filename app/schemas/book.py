@@ -25,6 +25,7 @@ class BookResponse(BaseModel):
     orm_mode = True
 
 class BookFilter(BaseModel):
+  title: Optional[str] = Field(..., description="filter by book title")
   genres: Optional[list[str]] = Field([], description="filter by its genres")
   language_codes: Optional[list[str]] = Field([], description="filter by its language code")
   authors: Optional[list[str]] = Field([], description="filter by its authors")
@@ -32,11 +33,12 @@ class BookFilter(BaseModel):
   @classmethod
   def as_query(
     cls,
+    title: str = Query(default_factory=str),
     genres: list[str] = Query(default_factory=list),
     language_codes: list[str] = Query(default_factory=list),
     authors: list[str] = Query(default_factory=list)
   ):
-    return cls(genres=genres, language_codes=language_codes, authors=authors)
+    return cls(title=title, genres=genres, language_codes=language_codes, authors=authors)
   
 class SimiliarBookFilter(BaseModel):
   book_id: int = Field(..., description="book_id")
