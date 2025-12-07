@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, status, Response
+from fastapi import APIRouter, Depends, HTTPException, status, Response, Body
 from app.schemas.response import BaseResponse
 from app.schemas.auth import LoginResponse, Login, Register
 from sqlalchemy.orm import Session
@@ -7,9 +7,9 @@ from app.services import auth as AuthService
 
 router = APIRouter(prefix="/api/v1/auth", tags=["Auth"])
 
-@router.get("/login", response_model=BaseResponse[LoginResponse])
+@router.post("/login", response_model=BaseResponse[LoginResponse])
 def login(
-  login_request: Login = Depends(),
+  login_request: Login = Body(...),
   db: Session = Depends(get_db)
 ):
   token, user = AuthService.authenticate_user(login_request, db)
