@@ -5,7 +5,7 @@ from app.models.genre import Genre
 from app.models.author import Author
 from app.models.user_book_ratings import UserBookRating
 from app.schemas.pagination import Pagination
-from app.schemas.book import BookFilter, SimiliarBookFilter, GetCFSVDRecommendation, AddRating
+from app.schemas.book import BookFilter, SimiliarBookFilter, GetCFSVDRecommendation, AddRating, BookTitleFilter
 from typing import Union, Any
 from sqlalchemy.exc import IntegrityError
 from fastapi import HTTPException, status
@@ -105,3 +105,21 @@ def get_liked_book_ids_by_user_id(user_id: int, db: Session):
     )
 
     return [book_id for (book_id,) in liked_books]
+
+def get_book_title(book_title_filter: BookTitleFilter,  pagination: Pagination, db: Session):
+  query = db.query(Book)
+  
+  if len(book_title_filter.title) != 0:
+    print(f"book title filter: {book_title_filter.title}")
+    query = query.filter(Book.title.ilike(f"%{book_title_filter.title}%"))
+    
+  books = (
+    query
+    .offset(pagination.skip)
+    .limit(pagination.limit)
+    .all()
+  )
+  
+  total = query.count()
+  
+  return books, total

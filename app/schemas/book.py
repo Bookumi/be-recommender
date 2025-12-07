@@ -64,3 +64,17 @@ class AddRating(BaseModel):
   rating: int
   _user_id: Optional[int]
   book_id: int
+  
+class BookTitles(BaseModel):
+  id: int
+  title: str
+
+class BookTitleFilter(BaseModel):
+  title: Optional[str] = Field(..., description="book title")
+  
+  @classmethod
+  def as_query(
+    cls,
+    title: str = Query(default_factory=str)
+  ):
+    return cls(title=title)

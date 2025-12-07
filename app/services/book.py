@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from app.database import get_db
-from app.schemas.book import BookFilter, BookResponse, SimiliarBookFilter, GetCFSVDRecommendation, AddRating
+from app.schemas.book import BookFilter, BookResponse, SimiliarBookFilter, GetCFSVDRecommendation, AddRating, BookTitleFilter
 from app.schemas.pagination import PaginatedResponse, Pagination
 from app.schemas.response import BaseResponse
 from app.repository import book as BookCRUD
@@ -141,3 +141,12 @@ def add_rating(add_rating_payload: AddRating, db: Session):
       book_rating = BookCRUD.add_rating(new_rating, db)
     
   return book_rating
+
+def get_book_titles(
+  book_title_filter: BookTitleFilter,
+  pagination: Pagination,
+  db: Session
+):
+  book_titles, total = BookCRUD.get_book_title(book_title_filter, pagination, db)
+  
+  return book_titles, total

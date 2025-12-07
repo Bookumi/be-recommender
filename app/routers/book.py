@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from app.database import get_db
-from app.schemas.book import BookFilter, BookResponse, SimiliarBookFilter, GetCFSVDRecommendation, AddRating
+from app.schemas.book import BookFilter, BookResponse, SimiliarBookFilter, GetCFSVDRecommendation, AddRating, BookTitles, BookTitleFilter
 from app.schemas.pagination import PaginatedResponse, Pagination
 from app.schemas.response import BaseResponse
 import app.services.book as BookService
@@ -28,6 +28,24 @@ def get_all_books(
     )
   )
 
+@router.get("/titles", response_model=BaseResponse[PaginatedResponse[BookTitles]])
+def get_all_book_titles(
+  book_title_filter: BookTitleFilter = Depends(BookTitleFilter.as_query),
+  pagination: Pagination = Depends(),
+  db: Session = Depends(get_db)
+):
+  book_title, total = BookService.get_book_titles(book_title_filter, pagination, db)
+  
+  return BaseResponse(
+    message="success get book title data",
+    data=PaginatedResponse(
+      total=total,
+      page=pagination.page,
+      limit=pagination.limit,
+      items=book_title,
+    )
+  )
+
 @router.post("/rating", response_model=BaseResponse[AddRating])
 def add_rating(
   add_rating_request: AddRating,
@@ -48,7 +66,6 @@ def add_rating(
     message="success add or update book rating",
     data=book_rating
   )
-  
   
 
 @router.get("/similiar", response_model=BaseResponse[PaginatedResponse[BookResponse]])
