@@ -60,8 +60,13 @@ def get_similiar_books(
     if len(book_filter.language_codes) != 0:
       query = query.filter(Book.language_code.in_(book_filter.language_codes))
 
-    if len(book_filter.genres) != 0:
-      query = query.join(Book.genres).filter(Genre.name.in_(book_filter.genres))
+  if len(book_filter.genres) != 0:
+     query = (
+         query
+         .join(Book.genres)
+         .filter(Genre.name.in_(book_filter.genres))
+         .distinct()
+     )
 
   books = (
     query
