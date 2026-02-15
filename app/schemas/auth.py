@@ -15,6 +15,7 @@ class JWTPayload(BaseModel):
   exp: datetime
 
 class LoginResponse(BaseModel):
+  id: int
   name: str
   email: str
   phonenumber: Optional[str]

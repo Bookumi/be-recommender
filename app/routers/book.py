@@ -12,6 +12,30 @@ import app.services.user_book_rating as UserRatingBookService
 
 router = APIRouter(prefix="/api/v1/books", tags=["Books"])
 
+@router.get("/rated/{user_id}", response_model=BaseResponse[PaginatedResponse[BookResponse]])
+def get_rated_books_by_user_id(
+  user_id: int,
+  pagination: Pagination = Depends(),
+  db: Session = Depends(get_db),
+  current_user: JWTPayload = Depends(verify_auth_token)
+):
+  current_user_id = current_user.sub
+  
+  books, total = BookService.get_rated_books_by_user_id(pagination, user_id, db)
+  
+  if user_id != current_user_id:
+    raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="you can't access this resource")
+  
+  return BaseResponse(
+    message="success get all rated books",
+    data=PaginatedResponse(
+      total=total,
+      page=pagination.page,
+      limit=pagination.limit,
+      items=books
+    )
+  )
+
 @router.get("", response_model=BaseResponse[PaginatedResponse[BookResponse]])
 def get_all_books(
   book_filter: BookFilter = Depends(BookFilter.as_query),

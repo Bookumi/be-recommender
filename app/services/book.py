@@ -150,3 +150,12 @@ def get_book_titles(
   book_titles, total = BookCRUD.get_book_title(book_title_filter, pagination, db)
   
   return book_titles, total
+
+def get_rated_books_by_user_id(
+  pagination: Pagination,
+  user_id: int,
+  db: Session
+):
+  books, total = BookCRUD.get_rated_books_by_user(pagination, user_id, db)
+  
+  return books, total

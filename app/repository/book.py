@@ -131,3 +131,20 @@ def get_book_title(book_title_filter: BookTitleFilter,  pagination: Pagination, 
   total = query.count()
   
   return books, total
+
+def get_rated_books_by_user(pagination: Pagination, user_id: int, db: Session):
+  rated_books = db.query(UserBookRating).filter_by(user_id=user_id).all()
+  
+  rated_book_ids = [rb.book_id for rb in rated_books]
+  
+  query = db.query(Book).filter(Book.id.in_(rated_book_ids))
+  
+  result = (
+    query
+    .offset(pagination.skip)
+    .limit(pagination.limit)
+    .all()
+  )
+  total = query.count()
+  
+  return result, total
