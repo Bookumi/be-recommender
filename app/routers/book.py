@@ -4,9 +4,11 @@ from app.database import get_db
 from app.schemas.book import BookFilter, BookResponse, SimiliarBookFilter, GetCFSVDRecommendation, AddRating, BookTitles, BookTitleFilter
 from app.schemas.pagination import PaginatedResponse, Pagination
 from app.schemas.response import BaseResponse
+from app.schemas.user_book_rating import UserBookRatingFilter, UserBookRatingResponse
 import app.services.book as BookService
 from app.middlewares.auth import verify_auth_token
 from app.schemas.auth import JWTPayload
+import app.services.user_book_rating as UserRatingBookService
 
 router = APIRouter(prefix="/api/v1/books", tags=["Books"])
 
@@ -67,6 +69,25 @@ def add_rating(
     data=book_rating
   )
   
+@router.get("/rating", response_model=BaseResponse[UserBookRatingResponse])
+def get_user_book_rating(
+  user_book_rating_filter: UserBookRatingFilter = Depends(UserBookRatingFilter.as_query),
+  db: Session = Depends(get_db),
+  current_user: JWTPayload = Depends(verify_auth_token)
+):
+  user_book_rating_filter.user_id = current_user.sub
+  
+  user_book_rating = UserRatingBookService.get_user_book_rating(user_book_rating_filter, db)
+  
+  return BaseResponse(
+    message="success get detail book rating",
+    data=UserBookRatingResponse(
+      user_id=user_book_rating.user_id,
+      book_id=user_book_rating.book_id,
+      rating=user_book_rating.rating
+    )
+  )
+  
 
 @router.get("/similiar", response_model=BaseResponse[PaginatedResponse[BookResponse]])
 def get_similiar_books(
@@ -81,7 +102,7 @@ def get_similiar_books(
   )
 
   return BaseResponse(
-    message=f"success get similiar books of book_id {book_filter.book_id}",
+    message=f"Successfully retrieved similar books for book_id {book_filter.book_id}",
     data=PaginatedResponse(
       total=total,
       page=pagination.page,
