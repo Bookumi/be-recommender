@@ -11,7 +11,7 @@ class UserBookRatingResponse(BaseModel):
   class Config:
     orm_mode = True
     
-class UserBookRatingFilter:
+class UserBookRatingFilter(BaseModel):
   user_id: Optional[int] = Field(0, description="user id")
   book_id: Optional[int] = Field(0, description="book id")
   rating: Optional[int] = Field(0, description="rating id")
