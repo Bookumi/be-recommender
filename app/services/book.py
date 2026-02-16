@@ -125,12 +125,18 @@ def add_rating(add_rating_payload: AddRating, db: Session):
   existing_book_rating: UserBookRating = BookCRUD.get_book_rating(
       add_rating_payload.book_id, add_rating_payload.user_id, db
   )
+  
+  book_rating = None
     
   if existing_book_rating:
-      # Directly update the existing object
-      book_rating = BookCRUD.update_rating(
-          existing_book_rating, add_rating_payload.rating, db
-      )
+      if add_rating_payload.rating == 0:
+        print(existing_book_rating)
+        BookCRUD.delete_rating(existing_book_rating, db)
+      else:
+        # Directly update the existing object
+        book_rating = BookCRUD.update_rating(
+            existing_book_rating, add_rating_payload.rating, db
+        )
   else:
       # Create a new rating object
       new_rating = UserBookRating(

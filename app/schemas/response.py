@@ -1,8 +1,8 @@
-from typing import Generic, TypeVar
+from typing import Generic, TypeVar, Optional
 from pydantic.generics import GenericModel
 
 T = TypeVar("T")
 
 class BaseResponse(GenericModel, Generic[T]):
   message: str
-  data: T
+  data: Optional[T] = None

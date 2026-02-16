@@ -80,18 +80,24 @@ def add_rating(
 ):
   add_rating_payload = add_rating_request.model_copy(update={"user_id": current_user.sub})
   
-  if int(add_rating_payload.rating) < 1 or int(add_rating_payload.rating) > 5:
+  if int(add_rating_payload.rating) < 0 or int(add_rating_payload.rating) > 5:
     raise HTTPException(
       status_code=status.HTTP_400_BAD_REQUEST,
-      detail="rating rabge must greater than 0 and less than or equal to 5 (1 - 5)"
+      detail="rating range must greater than 0 and less than or equal to 5 (1 - 5)"
     )
   
   book_rating = BookService.add_rating(add_rating_payload, db)
   
-  return BaseResponse(
-    message="success add or update book rating",
-    data=book_rating
-  )
+  if book_rating is not None:
+    return BaseResponse(
+      message="success add or update book rating",
+      data=book_rating
+    )
+  else:
+    return BaseResponse(
+      message="success add or update book rating",
+      data=None
+    )
   
 @router.get("/rating", response_model=BaseResponse[UserBookRatingResponse])
 def get_user_book_rating(

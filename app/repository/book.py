@@ -103,6 +103,14 @@ def update_rating(existing_rating: UserBookRating, new_rating_value: int, db: Se
       raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e.orig))
   return existing_rating
 
+def delete_rating(existing_rating: UserBookRating, db: Session):
+  try:
+    db.delete(existing_rating)
+    db.commit()
+  except IntegrityError as e:
+    db.rollback()
+    raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e.orig))
+
 def get_liked_book_ids_by_user_id(user_id: int, db: Session):
     liked_books = (
         db.query(UserBookRating)

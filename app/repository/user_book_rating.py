@@ -9,6 +9,6 @@ def get_user_book_rating(user_book_rating_filter: UserBookRatingFilter, db: Sess
     .filter(UserBookRating.book_id.__eq__(user_book_rating_filter.book_id))
     .filter(UserBookRating.user_id.__eq__(user_book_rating_filter.user_id))
     .first()
-  )
+  ) 
   
   return books
