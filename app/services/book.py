@@ -81,7 +81,7 @@ def get_cf_svd_recommendation(
   db: Session
 ):
   target_user: list[int]
-
+  
   if SVDRecommender.svd_model is None or SVDRecommender.user_items is None:
     raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="SVD model and user_items dict not load properly")
   

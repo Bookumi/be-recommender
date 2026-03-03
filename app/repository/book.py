@@ -60,13 +60,14 @@ def get_similiar_books(
     if len(book_filter.language_codes) != 0:
       query = query.filter(Book.language_code.in_(book_filter.language_codes))
 
-  if len(book_filter.genres) != 0:
-     query = (
-         query
-         .join(Book.genres)
-         .filter(Genre.name.in_(book_filter.genres))
-         .distinct()
-     )
+  if book_filter != None:
+    if len(book_filter.genres) != 0:
+       query = (
+           query
+           .join(Book.genres)
+           .filter(Genre.name.in_(book_filter.genres))
+           .distinct()
+       )
 
   books = (
     query
@@ -126,7 +127,6 @@ def get_book_title(book_title_filter: BookTitleFilter,  pagination: Pagination, 
   query = db.query(Book)
   
   if len(book_title_filter.title) != 0:
-    print(f"book title filter: {book_title_filter.title}")
     query = query.filter(Book.title.ilike(f"%{book_title_filter.title}%"))
     
   books = (
